@@ -1,0 +1,14 @@
+spring.application.name: recommendation-service
+
+server.port: 8002
+server.error.include-message: always
+
+logging:
+  level:
+    root: INFO
+    study.microservices: DEBUG
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080

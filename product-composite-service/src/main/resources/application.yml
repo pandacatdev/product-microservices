@@ -1,0 +1,30 @@
+spring.application.name: product-composite-service
+
+server.port: 8000
+
+app:
+  product-service:
+    host: localhost
+    port: 8001
+  recommendation-service:
+    host: localhost
+    port: 8002
+  review-service:
+    host: localhost
+    port: 8003
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080
+
+app:
+  product-service:
+    host: product
+    port: 8080
+  recommendation-service:
+    host: recommendation
+    port: 8080
+  review-service:
+    host: review
+    port: 8080

@@ -1,0 +1,13 @@
+spring.application.name: product-service
+
+server.port: 8001
+
+logging:
+  level:
+    root: INFO
+    study.microservices: DEBUG
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080

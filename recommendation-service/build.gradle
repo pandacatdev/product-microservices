@@ -1,0 +1,39 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'study.microservices.core.recommendation'
+version = '1.0.0-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+jar {
+	// Starting with Spring Boot v2.5.0, two JAR files are created when running the ./gradlew build command
+	// the ordinary JAR file, plus a plain JAR file containing only the class files resulting from compiling the Java files in the Spring Boot application
+	// Disable plain JAR file creation
+	// https://docs.spring.io/spring-boot/docs/3.0.4/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
+	enabled = false
+}
+
+dependencies {
+	implementation project(':api')
+	implementation project(':util')
+
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

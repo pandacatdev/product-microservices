@@ -1,0 +1,14 @@
+spring.application.name: review-service
+
+server.port: 8003
+server.error.include-message: always
+
+logging:
+  level:
+    root: INFO
+    study.microservices: DEBUG
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080
