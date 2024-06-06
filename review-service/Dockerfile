@@ -4,7 +4,8 @@ WORKDIR extracted
 ADD ./build/libs/*-SNAPSHOT.jar app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
-# The second stage builds the actual Docker image that will be used at runtime, picking the files as required from the first stage
+# The second stage builds the actual Docker image that will be used at runtime,
+# picking the files as required from the first stage
 FROM eclipse-temurin:17.0.5_8-jre-focal
 WORKDIR application
 COPY --from=builder extracted/dependencies/ ./
