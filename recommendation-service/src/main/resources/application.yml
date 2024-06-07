@@ -9,9 +9,16 @@ logging:
     study.microservices: DEBUG
 
 spring.data.mongodb:
+  host: localhost
+  port: 27017
+  database: recommendation-db
   auto-index-creation: true
 
 ---
 spring.config.activate.on-profile: docker
 
 server.port: 8080
+
+spring.data.mongodb:
+  host: mongodb
+  auto-index-creation: true

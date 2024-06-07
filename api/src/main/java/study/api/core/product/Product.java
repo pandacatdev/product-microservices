@@ -51,4 +51,14 @@ public class Product {
   public void setServiceAddress(String serviceAddress) {
     this.serviceAddress = serviceAddress;
   }
+
+  @Override
+  public String toString() {
+    return "Product{" +
+        "productId=" + productId +
+        ", name='" + name + '\'' +
+        ", weight=" + weight +
+        ", serviceAddress='" + serviceAddress + '\'' +
+        '}';
+  }
 }
