@@ -7,7 +7,7 @@ group = 'study.microservices.util'
 version = '1.0.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '21'
 }
 
 repositories {
