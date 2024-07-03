@@ -15,6 +15,10 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	springCloudVersion = '2023.0.1'
+}
+
 jar {
 	// Starting with Spring Boot v2.5.0, two JAR files are created when running the ./gradlew build command
 	// the ordinary JAR file, plus a plain JAR file containing only the class files resulting from compiling the Java files in the Spring Boot application
@@ -29,14 +33,28 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
+	implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
 	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.3.0'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
+	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-binder'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// To avoid the following error message on Apple silicon (for details, see https://github.com/netty/netty/issues/11693):
 	// Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider, fallback to system defaults. This may result in incorrect DNS resolutions on MacOS.
 	implementation group: 'io.netty', name: 'netty-resolver-dns-native-macos', classifier: 'osx-aarch_64'
+
+	// Fix for com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.ZonedDateTime` not supported by default
+	// add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
 }
 
 tasks.named('test') {
