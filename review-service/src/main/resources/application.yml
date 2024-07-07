@@ -1,4 +1,4 @@
-spring.application.name: review-service
+spring.application.name: review
 
 server.port: 8003
 server.error.include-message: always
@@ -19,6 +19,18 @@ logging:
     study.microservices: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+app.eureka-server: localhost
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${app.eureka-server}:8761/eureka/
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5
 
 spring.cloud.function.definition: messageProcessor
 
@@ -65,6 +77,8 @@ spring.datasource:
 spring.rabbitmq.host: rabbitmq
 
 spring.cloud.stream.kafka.binder.brokers: kafka
+
+app.eureka-server: eureka
 
 ---
 spring.config.activate.on-profile: streaming_partitioned

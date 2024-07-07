@@ -22,8 +22,10 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static reactor.core.publisher.Mono.just;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = {"spring.cloud.stream.defaultBinder=rabbit", "logging.level.study.microservices=DEBUG"})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+		"spring.cloud.stream.defaultBinder=rabbit",
+		"logging.level.se.magnus=DEBUG",
+		"eureka.client.enabled=false"})
 class ReviewServiceApplicationTests extends MySqlTestBase {
 
 	@Autowired
