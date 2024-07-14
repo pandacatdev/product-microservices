@@ -5,14 +5,11 @@ import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
@@ -31,7 +28,6 @@ import study.api.exceptions.NotFoundException;
 import study.util.http.HttpErrorInfo;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import static java.util.logging.Level.FINE;
 import static reactor.core.publisher.Flux.empty;
@@ -85,14 +81,6 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
     return Mono.fromRunnable(()
             -> sendMessage("products-out-0", new Event<>(Event.Type.DELETE, productId, null)))
         .subscribeOn(publishEventScheduler).then();
-  }
-
-  private String getErrorMessage(HttpClientErrorException ex) {
-    try {
-      return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
-    } catch (IOException e) {
-      return ex.getMessage();
-    }
   }
 
   @Override
@@ -150,22 +138,6 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
         .subscribeOn(publishEventScheduler).then();
   }
 
-  private RuntimeException handleHttpClientException(HttpClientErrorException ex) {
-    switch (Objects.requireNonNull(HttpStatus.resolve(ex.getStatusCode().value()))) {
-
-      case NOT_FOUND:
-        return new NotFoundException(getErrorMessage(ex));
-
-      case UNPROCESSABLE_ENTITY:
-        return new InvalidInputException(getErrorMessage(ex));
-
-      default:
-        LOG.warn("Got an unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-        LOG.warn("Error body: {}", ex.getResponseBodyAsString());
-        return ex;
-    }
-  }
-
   private void sendMessage(String bindingName, Event event) {
     LOG.debug("Sending a {} message to {}", event.getEventType(), bindingName);
 
@@ -206,26 +178,5 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
     } catch (IOException e) {
       return ex.getMessage();
     }
-  }
-
-  public Mono<Health> getProductHealth() {
-    return getHealth(PRODUCT_SERVICE_URL);
-  }
-
-  public Mono<Health> getRecommendationHealth() {
-    return getHealth(RECOMMENDATION_SERVICE_URL);
-  }
-
-  public Mono<Health> getReviewHealth() {
-    return getHealth(REVIEW_SERVICE_URL);
-  }
-
-  private Mono<Health> getHealth(String url) {
-    url += "/actuator/health";
-    LOG.debug("Will call the Health API on URL: {}", url);
-    return webClient.get().uri(url).retrieve().bodyToMono(String.class)
-        .map(s -> new Health.Builder().up().build())
-        .onErrorResume(ex -> Mono.just(new Health.Builder().down(ex).build()))
-        .log(LOG.getName(), FINE);
   }
 }
