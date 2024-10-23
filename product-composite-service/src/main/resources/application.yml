@@ -8,10 +8,22 @@ logging:
     study.microservices: DEBUG
 
 springdoc:
-  swagger-ui.path: /openapi/swagger-ui.html
   api-docs.path: /openapi/v3/api-docs
   packagesToScan: study.microservices.composite.product
   pathsToMatch: /**
+  cache.disabled: true
+
+  swagger-ui:
+    path: /openapi/swagger-ui.html
+    oauth2-redirect-url: /swagger-ui/oauth2-redirect.html
+    oauth:
+      clientId: writer
+      clientSecret: secret-writer
+      useBasicAuthenticationWithAccessCodeGrant: true
+
+  oAuthFlow:
+    authorizationUrl: https://localhost:8443/oauth2/authorize
+    tokenUrl: https://localhost:8443/oauth2/token
 
 server.forward-headers-strategy: framework
 
@@ -83,12 +95,16 @@ api:
 
         This means that a delete request of a non-existing product will return **200 Ok**.
 
-app.eureka-server: localhost
+app:
+  eureka-username: u
+  eureka-password: p
+  eureka-server: localhost
+  auth-server: localhost
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${app.eureka-server}:8761/eureka/
+      defaultZone: "http://${app.eureka-username}:${app.eureka-password}@${app.eureka-server}:8761/eureka/"
     initialInstanceInfoReplicationIntervalSeconds: 5
     registryFetchIntervalSeconds: 5
   instance:
@@ -122,6 +138,8 @@ spring.rabbitmq:
   username: guest
   password: guest
 
+spring.security.oauth2.resourceserver.jwt.issuer-uri: http://${app.auth-server}:9999
+
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
 
@@ -136,7 +154,9 @@ spring.rabbitmq.host: rabbitmq
 
 spring.cloud.stream.kafka.binder.brokers: kafka
 
-app.eureka-server: eureka
+app:
+  eureka-server: eureka
+  auth-server: auth-server
 
 ---
 spring.config.activate.on-profile: streaming_partitioned
